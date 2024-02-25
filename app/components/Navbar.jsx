@@ -5,18 +5,20 @@ import Link from "next/link";
 
 export default function Navbar() {
   return (
-    <nav class="w-full bg-teal-50 flex flex-row">
-      <div class="flex-auto">
+    <nav className="w-full bg-teal-50 flex flex-row">
+      <div className="flex-auto">
         <Link href="/">
-          <Image src={Logo} width={70} placeholder="blur" quality={100} />
+          <Image src={Logo} width={70} placeholder="blur" quality={100} alt = "Mama shop logo" />
         </Link>
       </div>
-      <div class="flex-auto flex flex-row justify-end items-center text-center">
-        <div class="mx-2 px-2 hover:bg-teal-100">
+      <div className="flex-auto flex flex-row justify-end items-center text-center">
+        <div className="mx-2 px-2 hover:bg-teal-100">
           <Link href="/Products">Products</Link>
         </div>
-        <div class="mx-2 px-2 hover:bg-teal-100 h-max">
-          <Link href="/Cart">Cart</Link>
+        <div className="mx-2 px-2 hover:bg-teal-100">
+          <div>
+            <Link href="/Cart">Cart</Link>
+          </div>
         </div>
       </div>
     </nav>
