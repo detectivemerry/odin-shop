@@ -1,5 +1,8 @@
+"use client"
+
 import React from "react";
 import Image from "next/image";
+import { useState } from "react";
 
 export const dynamicParam = true;
 
@@ -23,9 +26,21 @@ async function getProduct(id) {
   return res.json();
 }
 
+
 export default async function ProductDetails({ params }) {
   const product = await getProduct(params.id);
+  const [ count, setCount ] =  useState(0);
 
+function selectOperator(e, operator){
+    e.preventDefault();
+    if(operator === '+'){
+        setCount((prevCount) => prevCount += 1)
+    }
+    else{
+        setCount((prevCount) => prevCount -= 1)
+    }
+    
+}
   return (
     <div className="flex flex-row mx-32 my-16">
       <div className="border-2 w-96 flex flex-col  justify-center items-center flex-2 bg-white">
@@ -56,7 +71,7 @@ export default async function ProductDetails({ params }) {
               -
             </button>
             <div>
-              <input className="w-24 h-8"></input>
+              <input className="w-24 h-8 text-center" value = {count}></input>
             </div>
             <button className="bg-teal-700 text-white text-3xl font-bold w-12 rounded hover:bg-teal-900">
               +
