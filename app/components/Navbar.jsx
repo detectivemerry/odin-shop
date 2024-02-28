@@ -1,9 +1,14 @@
-import React from "react";
+"use client";
+
+import React, { useContext, useState } from "react";
 import Image from "next/image";
 import Logo from "./logo.png";
 import Link from "next/link";
+import { AppContext } from "@/app/context/App.context";
 
 export default function Navbar() {
+  const context = useContext(AppContext);
+
   return (
     <nav className="w-full bg-teal-50 flex flex-row">
       <div className="flex-auto">
@@ -16,8 +21,13 @@ export default function Navbar() {
           <Link href="/Products">Products</Link>
         </div>
         <div className="mx-2 px-2 hover:bg-teal-100">
-          <div>
+          <div className = "flex flex-row gap-2 justify-center">
             <Link href="/Cart">Cart</Link>
+            {context.cartItems.length > 0 && 
+              <div className = "bg-teal-700 text-white p-1 rounded">
+                {context.cartItems.length}
+              </div>
+            }
           </div>
         </div>
       </div>

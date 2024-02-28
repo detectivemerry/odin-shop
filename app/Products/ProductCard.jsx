@@ -1,29 +1,8 @@
-"use client";
-
 import React from "react";
-import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link"
 
 export default function ProductCard({ product }) {
-  const [addedToCart, setAddedToCart] = useState(false);
-
-  const toggleAddedToCart = (e) => {
-    e.preventDefault();
-    setAddedToCart((prevAddedToCart) => !prevAddedToCart);
-  };
-
-  // <div>
-  //   {!addedToCart && (
-  //     <button className="bg-teal-600 hover:bg-teal-800 text-white px-4 py-2 rounded-full" onClick = {toggleAddedToCart}>
-  //       Add to cart
-  //     </button>
-  //   )}
-  //   {addedToCart && <AddToCartMenu toggleAddedToCart = {toggleAddedToCart} />}
-  // </div>
-  //  useEffect(()=>{
-  //
-  //  }, [addedToCart])
 
   return (
     <Link href = {`/Products/${product.id}`}>
@@ -33,8 +12,10 @@ export default function ProductCard({ product }) {
         <Image
           src={product.image}
           alt={`Image of ${product.title}`}
-          width={80}
-          height={160}
+          width={0}
+          height={0}
+          sizes="100vw"
+          style={{ width: "auto", height: "80%" }}
         />
       </div>
       <div>

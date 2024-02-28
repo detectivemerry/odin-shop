@@ -1,8 +1,7 @@
-"use client"
-
 import React from "react";
 import Image from "next/image";
-import { useState } from "react";
+import Counter from './Counter.jsx'
+// import { useState } from "react";
 
 export const dynamicParam = true;
 
@@ -29,18 +28,6 @@ async function getProduct(id) {
 
 export default async function ProductDetails({ params }) {
   const product = await getProduct(params.id);
-  const [ count, setCount ] =  useState(0);
-
-function selectOperator(e, operator){
-    e.preventDefault();
-    if(operator === '+'){
-        setCount((prevCount) => prevCount += 1)
-    }
-    else{
-        setCount((prevCount) => prevCount -= 1)
-    }
-    
-}
   return (
     <div className="flex flex-row mx-32 my-16">
       <div className="border-2 w-96 flex flex-col  justify-center items-center flex-2 bg-white">
@@ -65,23 +52,7 @@ function selectOperator(e, operator){
         <div className="text-teal-700 font-bold text-xl">
           $SGD {product.price}
         </div>
-        <div className="flex flex-col items-center gap-y-4 pt-5">
-          <div className = "flex flex-row gap-1 justify-center h-9">
-            <button className="bg-teal-700 text-white text-3xl font-bold w-12 rounded hover:bg-teal-900">
-              -
-            </button>
-            <div>
-              <input className="w-24 h-8 text-center" value = {count}></input>
-            </div>
-            <button className="bg-teal-700 text-white text-3xl font-bold w-12 rounded hover:bg-teal-900">
-              +
-            </button>
-          </div>
-
-          <div>
-            <button className = "bg-white text-teal-700 border-2 border-teal-700 rounded hover:bg-teal-900 p-1">Add to Cart</button>
-          </div>
-        </div>
+        <Counter id = {product.id} />
       </div>
     </div>
   );
