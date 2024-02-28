@@ -25,7 +25,7 @@ export default function Counter({ id }) {
 
   const context = useContext(AppContext)
 
-  // Add validation for count edge cases
+  // TODO: Add validation for count edge cases
   function handleSubmit(e){
     e.preventDefault();
     let product = context.cartItems.find(x => x.id == id)
@@ -45,8 +45,6 @@ export default function Counter({ id }) {
         })
     }
   }
-
-  // change nav bar to a client component and use ContextAPI to retrieve context
 
   return (
     <div className="flex flex-col items-center gap-y-4 pt-5">
@@ -71,7 +69,6 @@ export default function Counter({ id }) {
 
       <div>
         {!addedToCart &&
-        
         <button className="bg-white text-teal-700 border-2 border-teal-700 rounded hover:bg-teal-900 p-1"
         onClick = {handleSubmit}>
           Add to Cart
