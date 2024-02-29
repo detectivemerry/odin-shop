@@ -3,6 +3,7 @@
 import { AppContext } from "@/app/context/App.context";
 import React, { useContext } from "react";
 import { useState } from "react";
+import Link from "next/link"
 
 export default function Counter({ id }) {
   const [count, setCount] = useState(0);
@@ -44,6 +45,7 @@ export default function Counter({ id }) {
             return newCartItems;
         })
     }
+    setAddedToCard(true) 
   }
 
   return (
@@ -52,16 +54,18 @@ export default function Counter({ id }) {
         <button
           className="bg-teal-700 text-white text-3xl font-bold w-12 rounded hover:bg-teal-900"
           onClick={handleOperator("-")}
+          disabled = {addedToCart}
         >
           -
         </button>
         <div>
-          <input className="w-24 h-8 text-center" value={count} onChange = {(e)=>setCount(e.target.value)}></input>
+          <input className="w-24 h-8 text-center" disabled = {addedToCart} value={count} onChange = {(e)=>setCount(e.target.value)}></input>
         </div>
 
         <button
           className="bg-teal-700 text-white text-3xl font-bold w-12 rounded hover:bg-teal-900"
           onClick={handleOperator("+")}
+          disabled = {addedToCart}
         >
           +
         </button>
@@ -76,10 +80,14 @@ export default function Counter({ id }) {
         }
 
         {addedToCart &&
-        <button className="bg-white text-teal-700 border-2 border-teal-700 rounded hover:bg-teal-900 p-1"
-        onClick = {handleSubmit} disabled = "true">
+        <div className = "flex flex-col gap-5">
+        <button className="bg-white text-teal-700 border-2 border-teal-700 rounded hover:bg-teal-900 p-1 w-24"
+        onClick = {handleSubmit} disabled = {true}>
           Added to Cart!
        </button>
+       
+        <p className = "underline text-teal-600"><Link href = "/Products">Click here to continue browsing</Link></p>
+        </div>
         }
       </div>
 
