@@ -4,10 +4,12 @@ import React, { useContext, useState } from "react";
 import Image from "next/image";
 import Logo from "./logo.png";
 import Link from "next/link";
-import { AppContext } from "@/app/context/App.context";
+import { useSession } from "next-auth/react";
+import { AppContext } from "@/app/context/App.context"
 
 export default function Navbar() {
-  const context = useContext(AppContext);
+  const context = useContext(AppContext) 
+  const { data : session } = useSession()
 
   return (
     <nav className="w-full bg-teal-50 flex flex-row">
@@ -37,11 +39,11 @@ export default function Navbar() {
           </div>
         </div>
         <div>
-          {context.loggedIn ? (
-            <div>User</div>
+          {session ? (
+            <div>{`${session?.username}`}</div>
           ) : (
             <div>
-              <Link href="/Login">Sign in</Link>
+              <Link href="/api/auth/signin">Sign in</Link>
             </div>
           )}
         </div>

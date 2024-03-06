@@ -7,8 +7,10 @@ export default function page() {
     const [ username, setUsername ] = useState("")
     const [ password, setPassword ] = useState("")
 
-    function handleSubmit(){
-        
+    function handleSubmit(e){
+      e.preventDefault();
+      const form = { username : username, password : password}
+      
     } 
 
   return (
