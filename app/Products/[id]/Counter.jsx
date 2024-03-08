@@ -26,7 +26,6 @@ export default function Counter({ id }) {
 
   const context = useContext(AppContext)
 
-  // TODO: Add validation for count edge cases
   function handleSubmit(e){
     e.preventDefault();
     let product = context.cartItems.find(x => x.id == id)
@@ -37,10 +36,10 @@ export default function Counter({ id }) {
     else{ // product in cart
         context.setCartItems((prevCartItems) => {
             const newCartItems = prevCartItems.map((item) => {
-                //console.log(item)
                 if(item.id == id){
                     item.quantity = count
                 }
+                return item
             })
             return newCartItems;
         })
@@ -80,13 +79,14 @@ export default function Counter({ id }) {
         }
 
         {addedToCart &&
-        <div className = "flex flex-col gap-5">
-        <button className="bg-white text-teal-700 border-2 border-teal-700 rounded hover:bg-teal-900 p-1 w-24"
+        <div className = "flex flex-col gap-5 items-center">
+        <button className="bg-white text-teal-700 border-2 border-teal-700 rounded p-1 w-24"
         onClick = {handleSubmit} disabled = {true}>
           Added to Cart!
        </button>
        
         <p className = "underline text-teal-600"><Link href = "/Products">Click here to continue browsing</Link></p>
+        <p className = "underline text-teal-600"><Link href = "/Cart">Click here to view Cart</Link></p>
         </div>
         }
       </div>

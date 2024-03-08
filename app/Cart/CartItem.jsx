@@ -3,53 +3,104 @@
 import Image from "next/image";
 import deleteLogo from "./delete_logo.png";
 import { AppContext } from "@/app/context/App.context";
-import React, { useContext } from "react";
+import React, { useContext, useState, useEffect } from "react";
 
-export default function CartItem({ cartItem, setCartItems }) {
-  const { id, image, title, price, quantity } = cartItem;
+export default function CartItem({ id, setPrices}) {
 
   const context = useContext(AppContext);
+  const [selectedQuantity, setSelectedQuantity ] = useState(false)
+  const [currentItem, setCurrentItem] = useState({})
+  const [currentQuantity, setCurrentQuantity] = useState(0)
+  const [isLoading, setIsLoading] = useState(true)
 
+  // update this delete function
   function deleteCartItem() {
-    setCartItems((prevCartItems) =>
+    context.setCartItems((prevCartItems) =>
       prevCartItems.filter((item) => item.id != id)
     );
+    console.log("context items:")
+    console.log(context.cartItems)
   }
 
-  //function changeCartItemQuantity(e) {
-  //  e.preventDefault();
-  //  console.log(e.target.value);
-  //  context.setCartItems((prevCartItems) => {
-  //      const res = prevCartItems.map((item) => {
-  //          if(item.id == id){
-  //              item.quantity = 5
-  //          }
-  //      })
-  //      return res
-  //  })
-  //}
+  function handleSelectQuantity(e) {
+    e.preventDefault();
+    setCurrentQuantity(e.target.value)
+    setSelectedQuantity(true)
+  }
+
+  function handleChangeQuantity(e){
+    context.setCartItems((prevCartItems) => {
+      return prevCartItems.map((item) => {
+        if(item.id == id){
+          item.quantity = currentQuantity
+        }
+        return item
+      })
+    })
+    setSelectedQuantity(false)
+    setCurrentQuantity(currentItem.quantity)
+  }
+
+  function handleCancelChange(e){
+    e.preventDefault();
+    setSelectedQuantity(false)
+    setCurrentQuantity(currentItem.quantity)
+  }
+
+
+ // populate cart item details
+  useEffect(() => {
+    fetch(`https://fakestoreapi.com/products/${id}`)
+    .then((json) => json.json())
+    .then((res) => {
+        const itemContext = context.cartItems.find((item) => item.id == id);
+        res.quantity = itemContext.quantity;
+        setCurrentItem(res)
+        setCurrentQuantity(res.quantity)
+        // update total cost
+        setPrices((prevPrices) => {
+          const newPrices = prevPrices.filter((price) => price.id != id)
+          newPrices.push({id : id, total : res.price * res.quantity})
+          return newPrices
+        })
+        setIsLoading(false)
+    })
+    .catch((error) => 
+    console.error(error));
+
+    
+  }, [context.cartItems]);
 
   return (
     <div className="flex flex-row mx-3">
       <div className="flex-[2_1_0%] border-2 border-teal-700 border-t-0 p-1 flex flex-col items-center h-36">
-        <Image src={image} alt={`Image for ${title}`} 
+        {isLoading ?
+        <p>Loading ... </p> : 
+        <Image src={currentItem.image} alt={`Image for ${currentItem.title}`} 
           width={0}
           height={0}
           sizes="100vw"
           style={{ width: "auto", height: "80%" }}
          />
+        }
       </div>
       <div className="flex-[3_1_0%] border-2 border-l-0 border-teal-700 border-t-0 p-1 flex flex-col justify-center">
-        {title}
+        {currentItem.title}
       </div>
       <div className=" flex-[1_1_0%] border-2 border-teal-700 border-l-0 border-t-0 p-1 text-center flex flex-col justify-center items-center">
-        <input value={quantity} className="w-full text-center w-6/12" />
+        <input value={currentQuantity} className="w-full text-center w-6/12" onChange = {handleSelectQuantity}/>
+        {selectedQuantity &&
+          <div className = "flex flex-row gap-1 py-2">
+        <button onClick = {handleChangeQuantity} className = "bg-green-600 border-2 text-white p-1">confirm</button>
+        <button onClick = {handleCancelChange} className = "bg-red-600 border-2 text-white p-1">cancel</button>
+          </div>
+        }
       </div>
       <div className="flex-[1_1_0%] border-2 border-teal-700 border-l-0 border-t-0 p-1 text-center flex flex-col justify-center">
-        ${price}
+        ${currentItem.price}
       </div>
       <div className="flex-[1_1_0%] border-2 border-teal-700 border-l-0 border-t-0 p-1 text-center flex flex-col justify-center">
-        ${price * quantity}
+        ${Math.round(currentItem.price * currentItem.quantity * 100) / 100}
       </div>
       <div className="flex-[1_1_0%] border-2 border-teal-700 border-l-0 border-t-0 p-1 text-center flex flex-col justify-center items-center">
         <button className="hover:scale-125" onClick={deleteCartItem}>

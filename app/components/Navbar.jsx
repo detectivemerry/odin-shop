@@ -5,11 +5,11 @@ import Image from "next/image";
 import Logo from "./logo.png";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import { AppContext } from "@/app/context/App.context"
+import { AppContext } from "@/app/context/App.context";
 
 export default function Navbar() {
-  const context = useContext(AppContext) 
-  const { data : session } = useSession()
+  const context = useContext(AppContext);
+  const { data: session } = useSession();
 
   return (
     <nav className="w-full bg-teal-50 flex flex-row">
@@ -40,7 +40,12 @@ export default function Navbar() {
         </div>
         <div>
           {session ? (
-            <div>{`${session?.username}`}</div>
+            <div className = "flex flex-row gap-2">
+              <div>{`${session?.username}`}</div>
+              <Link href="/api/auth/signout">
+                <div>logout</div>
+              </Link>
+            </div>
           ) : (
             <div>
               <Link href="/api/auth/signin">Sign in</Link>
