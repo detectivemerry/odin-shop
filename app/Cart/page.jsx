@@ -6,24 +6,20 @@ import Link from "next/link";
 import ProgressMenu from "./ProgressMenu";
 import CartItem from "./CartItem";
 import CartItemHeader from "./CartItemHeader";
-
-//1. fetch all items one by one TO component usestate
-//2. display (title, quantity)
-//3. users can either remove object or change quantity, reflected on component use state ONLY
-//4. changes user made are reflected correctly
-//5. before component unmount, update context using clean up function
-
 export default function page() {
   const context = useContext(AppContext);
 
   const [ prices, setPrices ] = useState([]) // [{id : "2", price : "32"}]
   const [totalPrice, setTotalPrice] = useState(0)
+  const [isLoading, setIsLoading] = useState(true)
 
   // update total price
   useEffect(()=> {
+    setIsLoading(true)
     let currentTotalPrice = 0
     prices.forEach((price) => { currentTotalPrice += price.total})
     setTotalPrice(Math.round(currentTotalPrice * 100) / 100)
+    setIsLoading(false)
   }, [prices])
 
   return (
@@ -44,7 +40,7 @@ export default function page() {
         {context.cartItems.length > 0 && (
           <div className="p-3 float-right flex flex-col justify-center gap-3">
             <div className="text-2xl text-center">
-              Total: {totalPrice}
+              Total: ${isLoading ? <>Loading ... </> : (Math.round(totalPrice* 100) / 100).toFixed(2)}
             </div>
             <div>
               <Link href = "/Checkout">

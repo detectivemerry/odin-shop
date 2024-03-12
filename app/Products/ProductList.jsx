@@ -6,6 +6,8 @@ async function getProducts() {
     next: {
       revalidate: 60,
     },
+  }).catch((error) => {
+    console.error(error)
   });
 
   return res.json();

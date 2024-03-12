@@ -8,12 +8,16 @@ export const dynamicParam = true;
 // pre-render all product details all the possible product ids
 // returning smth like this [{id: '1'}, {id : '2'}, ...]
 export async function generateStaticParams() {
-  const res = await fetch("https://fakestoreapi.com/products");
+  const res = await fetch("https://fakestoreapi.com/products")
+  .catch((error) => {
+    console.error(error)
+  })
+  
   const products = await res.json();
-
   return products.map((product) => {
     id: product.id;
-  });
+  })
+  
 }
 
 async function getProduct(id) {
@@ -21,6 +25,9 @@ async function getProduct(id) {
     next: {
       revalidate: 60,
     },
+  })
+  .catch((error)=> {
+    console.error(error)
   });
   return res.json();
 }
@@ -50,7 +57,7 @@ export default async function ProductDetails({ params }) {
         <div>{product.description}</div>
 
         <div className="text-teal-700 font-bold text-xl">
-          $SGD {product.price}
+          $SGD {(Math.round(product.price* 100) / 100).toFixed(2)}
         </div>
         <Counter id = {product.id} />
       </div>

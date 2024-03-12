@@ -3,7 +3,10 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import pool from "@/app/lib/database"
 
 const authOptions = {
-
+  pages : {
+    signIn : "/Login",
+    signOut : "/SignOut"
+  },
   providers: [
     CredentialsProvider({
       // The name to display on the sign in form (e.g. "Sign in with...")
@@ -36,6 +39,10 @@ const authOptions = {
         catch(error){
           console.error(error)
         }
+        //finally{
+          //if(conn) conn.end();
+          //if(pool) pool.end();
+        //}
         
         return null
       

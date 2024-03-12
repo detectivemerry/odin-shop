@@ -21,7 +21,7 @@ export default function ProductCard({ product }) {
       <div>
         {product.title.slice(0, 40)} {product.title.length > 40 && <>...</>}
       </div>
-      <div className="text-teal-700 font-bold">$SGD {product.price}</div>
+      <div className="text-teal-700 font-bold">$SGD {(Math.round(product.price* 100) / 100).toFixed(2)}</div>
     </div>
     </Link>
   );

@@ -4,6 +4,7 @@ import Image from "next/image";
 import deleteLogo from "./delete_logo.png";
 import { AppContext } from "@/app/context/App.context";
 import React, { useContext, useState, useEffect } from "react";
+import Link from "next/link"
 
 export default function CartItem({ id, setPrices}) {
 
@@ -13,13 +14,13 @@ export default function CartItem({ id, setPrices}) {
   const [currentQuantity, setCurrentQuantity] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
 
-  // update this delete function
   function deleteCartItem() {
     context.setCartItems((prevCartItems) =>
       prevCartItems.filter((item) => item.id != id)
     );
-    console.log("context items:")
-    console.log(context.cartItems)
+    setPrices((prevPrices) => prevPrices.filter((item) => {
+      item.id != id
+    }))
   }
 
   function handleSelectQuantity(e) {
@@ -67,7 +68,6 @@ export default function CartItem({ id, setPrices}) {
     })
     .catch((error) => 
     console.error(error));
-
     
   }, [context.cartItems]);
 
@@ -80,14 +80,22 @@ export default function CartItem({ id, setPrices}) {
           width={0}
           height={0}
           sizes="100vw"
-          style={{ width: "auto", height: "80%" }}
+          style={{ width: "auto", height: "80%" }
+          }
          />
         }
       </div>
-      <div className="flex-[3_1_0%] border-2 border-l-0 border-teal-700 border-t-0 p-1 flex flex-col justify-center">
-        {currentItem.title}
+      <div className="flex-[3_1_0%] border-2 border-l-0 border-teal-700 border-t-0 p-1 flex flex-col justify-center underline text-blue-700">
+        
+        <Link href = {`/Products/${id}`}>
+        {isLoading ?
+        <p>Loading ... </p> : currentItem.title}
+        </Link>
       </div>
       <div className=" flex-[1_1_0%] border-2 border-teal-700 border-l-0 border-t-0 p-1 text-center flex flex-col justify-center items-center">
+      {isLoading ?
+        <p>Loading ... </p> :
+        <>
         <input value={currentQuantity} className="w-full text-center w-6/12" onChange = {handleSelectQuantity}/>
         {selectedQuantity &&
           <div className = "flex flex-row gap-1 py-2">
@@ -95,12 +103,16 @@ export default function CartItem({ id, setPrices}) {
         <button onClick = {handleCancelChange} className = "bg-red-600 border-2 text-white p-1">cancel</button>
           </div>
         }
+        </>
+      }
       </div>
       <div className="flex-[1_1_0%] border-2 border-teal-700 border-l-0 border-t-0 p-1 text-center flex flex-col justify-center">
-        ${currentItem.price}
+        ${isLoading ?
+        <>Loading ... </> :(Math.round(currentItem.price* 100) / 100).toFixed(2)}
       </div>
       <div className="flex-[1_1_0%] border-2 border-teal-700 border-l-0 border-t-0 p-1 text-center flex flex-col justify-center">
-        ${Math.round(currentItem.price * currentItem.quantity * 100) / 100}
+        ${isLoading ?
+        <>Loading ... </> :(Math.round(currentItem.price* currentItem.quantity * 100) / 100).toFixed(2)}
       </div>
       <div className="flex-[1_1_0%] border-2 border-teal-700 border-l-0 border-t-0 p-1 text-center flex flex-col justify-center items-center">
         <button className="hover:scale-125" onClick={deleteCartItem}>

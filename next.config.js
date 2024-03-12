@@ -11,19 +11,19 @@ module.exports = (phase, { defaultConfig }) => {
     return {
       ...defaultConfig,
   
-      webpack: (config) => {
-        config.resolve = {
-          ...config.resolve,
-          fallback: {
-            "fs": false,
-            "path": false,
-            "os": false,
-            "net" : false,
-            "tls" : false,
-          }
-        }
-        return config
-      },
+      //webpack: (config) => {
+        //config.resolve = {
+          //...config.resolve,
+          //fallback: {
+            //"fs": false,
+            //"path": false,
+            //"os": false,
+            //"net" : false,
+            //"tls" : false,
+          //}
+        //}
+        //return config
+      //},
       images : {
         domains : ['fakestoreapi.com']
       }
