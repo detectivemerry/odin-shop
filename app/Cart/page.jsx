@@ -9,7 +9,7 @@ import CartItemHeader from "./CartItemHeader";
 export default function page() {
   const context = useContext(AppContext);
 
-  const [ prices, setPrices ] = useState([]) // [{id : "2", price : "32"}]
+  const [prices, setPrices ] = useState([]) // [{id : "2", price : "32"}]
   const [totalPrice, setTotalPrice] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
 

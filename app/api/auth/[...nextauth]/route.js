@@ -1,11 +1,13 @@
 import NextAuth from "next-auth"
 import CredentialsProvider from "next-auth/providers/credentials";
 import pool from "@/app/lib/database"
+import bcrypt from 'bcrypt';
 
 const authOptions = {
   pages : {
     signIn : "/Login",
-    signOut : "/SignOut"
+    signOut : "/SignOut",
+    error : "/Login"
   },
   providers: [
     CredentialsProvider({
@@ -20,7 +22,6 @@ const authOptions = {
         password: { label: "Password", type: "password", value : "1234"},
       },
       async authorize(credentials) {
-       //  Add logic here to look up the user from the credentials supplied
        //  const user = { id: "1", name: "J Smith", email: "jsmith@example.com" };
 
         let conn;
@@ -30,22 +31,23 @@ const authOptions = {
           const [user] = await conn.query(query, credentials?.email);
           conn.release()
 
-          if(user === null){
-            throw new Error("Email does not exist");
+          if(!user){
+            return null
           } 
-          //console.log(user)
-          return user
-          }
+
+          const passwordMatch = await bcrypt.compare(credentials?.password, user.password)
+          if(passwordMatch) return user
+        
+          return null
+        }
         catch(error){
           console.error(error)
         }
-        //finally{
-          //if(conn) conn.end();
+        finally{
+          if(conn) conn.end();
           //if(pool) pool.end();
-        //}
+        }
         
-        return null
-      
       },
     }),
   ],

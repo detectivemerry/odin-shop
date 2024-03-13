@@ -1,6 +1,5 @@
-import Image from 'next/image'
-
 export default function Home() {
+
   return (
     <main className = "m-[10vw]">
       <div className = "text-center text-7xl m-[10vh] underline decoration-orange-800">

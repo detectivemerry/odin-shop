@@ -7,7 +7,7 @@ const pool = mariadb.createPool({
   database: process.env.MARIADB_DATABASE
 });
 export default pool;
-//
+
 //export default async function getUsers( testObject ){
 //  console.log(testObject);
 //   return await pool.query('SELECT * from users');
