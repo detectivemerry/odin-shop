@@ -1,10 +1,11 @@
 "use client";
 
-import { AppContext } from "@/app/context/App.context";
-import React, { useContext } from "react";
+import React from "react";
 import { useState, useEffect } from "react";
 import { isValidQuantity } from "@/app/lib/validation";
 import Link from "next/link"
+import { useSession } from "next-auth/react";
+import { deleteCartItem, updateCartItemQuantity, addCartItem } from "@/app/lib/cartItems";
 
 export default function Counter({ id }) {
 
@@ -12,6 +13,7 @@ export default function Counter({ id }) {
   const [productInCart, setProductInCart] = useState(false)
   const [error, setError] = useState(false);
   const [currentQuantity, setCurrentQuantity] = useState(0)
+  const [errorMessage , setErrorMessage] = useState("") 
 
   const handleChange = (operator) => (e) => {
     e.preventDefault();
@@ -36,22 +38,24 @@ export default function Counter({ id }) {
     })
   }
 
-  const context = useContext(AppContext)
+  // const context = useContext(AppContext)
+  const { data : context, update} = useSession()
 
   // Retrieve quantity for item if already in cart
   useEffect(() => {
     context.cartItems.forEach((item) => {
-      if(item.id === id){
+      if(item.product_id === id){
         setCurrentQuantity(item.quantity)
         setCount(item.quantity)
         setProductInCart(true)
       }
     })
-  }, [context.cartItems])
+  }, [])
 
-  function handleSubmit(e){
+  async function handleSubmit(e){
     e.preventDefault();
     setError(false)
+    setErrorMessage("")
 
     // count is not number or in range
     if(!isValidQuantity(count)){
@@ -62,25 +66,26 @@ export default function Counter({ id }) {
     
     // remove product from cart
     if(productInCart && count == 0){
-      context.setCartItems((prevCartItems) => {
-        return prevCartItems.filter((item) => item.id != id)
-      })
-      setCount(0)
-      setProductInCart(false)
+      const {error, data} = deleteCartItem(id)     
+      if(!error){
+        update()
+        setCount(0)
+        setProductInCart(false)
+      }
     }
     else if(productInCart){
-      context.setCartItems((prevCartItems) => {
-                  const newCartItems = prevCartItems.map((item) => {
-                      if(item.id == id){
-                          item.quantity = count
-                      }
-                      return item
-                  })
-                  return newCartItems;
-              })
+      const {error, data} = updateCartItemQuantity(id, count)     
+      if(!error){
+        update()
+        setProductInCart(true)
+      }
     }
     else{ // product not already in cart
-      context.setCartItems((prevCartItems) => [...prevCartItems, {id : id, quantity : count}])
+      const {error, data} = addCartItem(id, count)     
+      if(!error){
+        update()
+        setProductInCart(true)
+      }
     }
   }
 
@@ -109,6 +114,11 @@ export default function Counter({ id }) {
       
       {count >= 20 && <p className = "text-red-600">20 is the maximum quantity allowed per product.</p> }
 
+      {errorMessage &&
+        <div>
+          <p className = "text-red-600">{errorMessage}</p>
+        </div>
+      }
       {error &&
         <div>
           <p className = "text-red-600">Please enter a valid quantity!</p>

@@ -8,8 +8,8 @@ import { useSession } from "next-auth/react";
 import { AppContext } from "@/app/context/App.context";
 
 export default function Navbar() {
-  const context = useContext(AppContext);
-  const { data: session } = useSession();
+  //const context = useContext(AppContext);
+  const { data: session} = useSession();
 
   return (
     <nav className="w-full bg-teal-50 flex flex-row">
@@ -31,9 +31,9 @@ export default function Navbar() {
         <div className="mx-2 px-2 hover:bg-teal-100">
           <div className="flex flex-row gap-2 justify-center">
             <Link href="/Cart">Cart</Link>
-            {context.cartItems.length > 0 && (
+            {session?.cartItems.length > 0 && (
               <div className="bg-teal-700 text-white p-1 rounded">
-                {context.cartItems.length}
+                {session?.cartItems.length}
               </div>
             )}
           </div>

@@ -16,12 +16,12 @@ export default function page() {
       setErrorMessage("");
       await signIn('credentials', {email, password, redirect : false})
       .then((res) => {
-        if(res && res.ok)
+        if(res && res.ok){
           router.push('/')
+        }
         else if(res && res.error == "CredentialsSignin")
           setErrorMessage("Sign in failed. Check the details you provided are correct.")
         else{
-          console.log(res)
           setErrorMessage("Unable to sign in.")
         }
       })

@@ -6,12 +6,16 @@ import Link from "next/link";
 import ProgressMenu from "./ProgressMenu";
 import CartItem from "./CartItem";
 import CartItemHeader from "./CartItemHeader";
+import { useSession } from "next-auth/react";
+
 export default function page() {
-  const context = useContext(AppContext);
+  //const context = useContext(AppContext);
+  const {data : context} = useSession() 
 
   const [prices, setPrices ] = useState([]) // [{id : "2", price : "32"}]
   const [totalPrice, setTotalPrice] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
+  const [message, setMessage] = useState({ type : "", content : ""})
 
   // update total price
   useEffect(()=> {
@@ -29,13 +33,13 @@ export default function page() {
         {context.cartItems.length > 0 && (
           <>
             <ProgressMenu />
-            <CartItemHeader />
+            <CartItemHeader message = {message} />
           </>
         )}
         {
           context.cartItems.length > 0 &&
           context.cartItems.map((cartItem) => {
-            return <CartItem key={cartItem.id} id ={cartItem.id} setPrices = {setPrices} />;
+            return <CartItem key={cartItem.product_id} id ={cartItem.product_id} setPrices = {setPrices} setMessage = {setMessage}/>;
           })}
         {context.cartItems.length > 0 && (
           <div className="p-3 float-right flex flex-col justify-center gap-3">

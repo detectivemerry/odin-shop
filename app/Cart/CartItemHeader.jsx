@@ -1,7 +1,12 @@
 import React from 'react'
 
-export default function CartItemHeader() {
+export default function CartItemHeader({message}) {
   return (
+    <>
+    {
+        message.type != "" ? <p className = "p-2 text-center">{message.type}:  {message.content}</p> : <></>
+    }
+
     <div className = "flex flex-row mx-3">
         <div className = "flex-[2_1_0%] border-2 border-teal-700 p-1">
             Product
@@ -23,5 +28,7 @@ export default function CartItemHeader() {
         </div>
 
     </div>
+    </>
+
   )
 }
