@@ -1,6 +1,6 @@
 
 import CredentialsProvider from "next-auth/providers/credentials";
-import pool from "@/app/lib/database"
+//import pool from "@/app/lib/database"
 import bcrypt from 'bcrypt';
 import poolConfig from "@/app/lib/poolConfig";
 const mariadb = require('mariadb')
@@ -26,9 +26,10 @@ export const authOptions = {
       },
       async authorize(credentials) {
        //  const user = { id: "1", name: "J Smith", email: "jsmith@example.com" };
-
+        let pool;
         let conn;
         try {
+          pool = mariadb.createPool(poolConfig)
           conn = await pool.getConnection();
           let query = "SELECT * FROM users WHERE email = ?"
           const [user] = await conn.query(query, credentials?.email);
@@ -54,7 +55,7 @@ export const authOptions = {
         }
         finally{
           if(conn) conn.end();
-          //if(pool) pool.end();
+          if(pool) pool.end();
         }
         
       },
@@ -77,12 +78,12 @@ export const authOptions = {
         token.cartItems = user.cartItems
       }
       if(trigger === "update"){
-        //const pool = mariadb.createConnection(poolConfig)
+        let pool;        
         let conn;
         let cartItems = []
         try {
+          pool = mariadb.createPool(poolConfig)
           conn = await pool.getConnection();
-          
           //retrieve cart items
           let query = "SELECT * FROM cart_items WHERE user_id = ?"
           const rows = await conn.query(query, token.id)
@@ -98,8 +99,8 @@ export const authOptions = {
         }
         finally{
           if(conn) conn.end();
+          if(pool) pool.end();
         }
-        
       }
 
       return token

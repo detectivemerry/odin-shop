@@ -1,12 +1,19 @@
 import React from 'react'
+import clsx from 'clsx';
 
 export default function CartItemHeader({message}) {
   return (
     <>
     {
-        message.type != "" ? <p className = "p-2 text-center">{message.type}:  {message.content}</p> : <></>
+        message.type != "" ? <p className ={clsx(
+        "p-2 text-center",
+        {
+            'text-red-500' : message.type === 'error',
+            'text-teal-600' : message.type == 'message'
+        },
+        )}
+        >{message.type}:  {message.content}</p> : <></>
     }
-
     <div className = "flex flex-row mx-3">
         <div className = "flex-[2_1_0%] border-2 border-teal-700 p-1">
             Product

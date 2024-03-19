@@ -5,7 +5,6 @@ import Image from "next/image";
 import Logo from "./logo.png";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import { AppContext } from "@/app/context/App.context";
 
 export default function Navbar() {
   //const context = useContext(AppContext);

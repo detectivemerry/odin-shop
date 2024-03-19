@@ -1,19 +1,22 @@
 import { NextResponse } from "next/server"
-import  pool  from "@/app/lib/database"
+//import  pool  from "@/app/lib/database"
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/authOptions";
+import poolConfig from "@/app/lib/poolConfig";
+const mariadb = require('mariadb')
 
 export async function DELETE(req, res){
     const { searchParams } = new URL(req.url)
     const product_id = searchParams.get('product_id');
     const session = await getServerSession(authOptions)
+    let pool;
     let conn;   
     try {
+        pool = mariadb.createPool(poolConfig)
         conn = await pool.getConnection();
         let query = "DELETE FROM cart_items WHERE product_id=? AND user_id=?";
         const response = await conn.query(query, [product_id, session.id]);
         conn.release();
-
         if(response.affectedRows == 1)
             return NextResponse.json({message : "Successful delete"}, {status : 200})
         else
@@ -24,8 +27,8 @@ export async function DELETE(req, res){
         return NextResponse.json({errorMessage : "Delete query was not successful"}, {status : 410})
     }
     finally{
-        if(conn)
-            conn.end();
+        if(conn)conn.end();
+        if(pool) pool.end();
     }
 }
 
@@ -34,8 +37,10 @@ export async function PATCH(req, res){
     const product_id = searchParams.get('product_id');
     const newQuantity = await req.json()
     const session = await getServerSession(authOptions)
+    let pool;
     let conn;   
     try {
+        pool = mariadb.createPool(poolConfig)
         conn = await pool.getConnection();
         let query = "UPDATE cart_items SET quantity =? WHERE product_id=? AND user_id=?";
         const response = await conn.query(query, [newQuantity, product_id, session.id]);
@@ -49,8 +54,8 @@ export async function PATCH(req, res){
         return NextResponse.json({errorMessage : "Update query was not successful"}, {status : 410})
     }
     finally{
-        if(conn)
-            conn.end();
+        if(conn) conn.end();
+        if(pool) pool.end();
     }
 }
 
@@ -59,8 +64,10 @@ export async function POST(req, res){
     const product_id = searchParams.get('product_id');
     const newQuantity = await req.json()
     const session = await getServerSession(authOptions)
+    let pool;
     let conn;   
     try {
+        pool = mariadb.createPool(poolConfig)
         conn = await pool.getConnection();
         let query = " INSERT INTO cart_items (user_id, product_id, quantity, paid) VALUES (?,?,?,?)";
         const response = await conn.query(query, [session.id, product_id, newQuantity, false]);
@@ -74,8 +81,8 @@ export async function POST(req, res){
         return NextResponse.json({errorMessage : "Insert query was not successful"}, {status : 410})
     }
     finally{
-        if(conn)
-            conn.end();
+        if(conn) conn.end();
+        if(pool) pool.end();
     }
 }
 

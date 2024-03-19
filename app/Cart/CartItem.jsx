@@ -9,7 +9,6 @@ import { useSession } from "next-auth/react";
 import { updateCartItemQuantity,  deleteCartItem } from "@/app/lib/cartItems"
 
 export default function CartItem({ id, setPrices, setMessage }) {
-  //const context = useContext(AppContext);
   const { data : context, update } = useSession();
   const [selectedQuantity, setSelectedQuantity] = useState(false);
   const [currentItem, setCurrentItem] = useState({});
@@ -44,8 +43,9 @@ export default function CartItem({ id, setPrices, setMessage }) {
       setErrorMessage("Please enter a valid quantity");
       return
     }
-    
-    const {error, data} = await updateCartItemQuantity(id, currentQuantity);
+
+    //remove product or update depending on whether new quantity is zero
+    const {error, data} = currentQuantity != 0 ? await updateCartItemQuantity(id, currentQuantity) : await deleteCartItem(id);
 
     if(error)
       setMessage({type : "error", content : data.message})
@@ -64,13 +64,14 @@ export default function CartItem({ id, setPrices, setMessage }) {
     setSelectedQuantity(false);
     setCurrentQuantity(currentItem.quantity);
   }
-
   // populate cart item details
   useEffect(() => {
+    const itemContext = context.cartItems.find((item) => item.product_id == id);
+    setIsLoading(true);
     fetch(`https://fakestoreapi.com/products/${id}`)
       .then((json) => json.json())
       .then((res) => {
-        const itemContext = context.cartItems.find((item) => item.product_id == id);
+        console.log(`fetching for id: ${id}`)
         res.quantity = itemContext.quantity;
         setCurrentItem(res);
         setCurrentQuantity(res.quantity);
@@ -83,7 +84,24 @@ export default function CartItem({ id, setPrices, setMessage }) {
         setIsLoading(false);
       })
       .catch((error) => console.error(error));
-  }, [context.cartItems]);
+  }, [])
+
+  // update item's quantity according to user session 
+  useEffect(() => {
+    const itemContext = context.cartItems.find((item) => item.product_id == id);
+    if(itemContext.quantity != currentQuantity){
+      setCurrentItem((prevItem) => {
+        return {...prevItem, quantity : itemContext.quantity}
+      })
+      setCurrentQuantity(itemContext.quantity);
+      // update total cost
+      setPrices((prevPrices) => {
+        const newPrices = prevPrices.filter((price) => price.id != id);
+        newPrices.push({ id: id, total: currentItem.price * itemContext.quantity});
+        return newPrices;
+      });
+    }
+  }, [context.cartItems])
 
   return (
     <div className="flex flex-row mx-3">

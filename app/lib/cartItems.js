@@ -7,7 +7,7 @@ export async function deleteCartItem(id) {
     next : { revalidate : 0},
   })
     .then(async(res) => {
-      const data = res.json()
+      const data = await res.json()
       if(res.ok)
         return {error : false, data : { message : data.message}}
       else

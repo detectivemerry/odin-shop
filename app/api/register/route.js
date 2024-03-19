@@ -2,6 +2,8 @@ import pool from "@/app/lib/database"
 import { NextResponse } from "next/server"
 import {isValidRegisterForm} from "@/app/lib/validation"
 import bcrypt from 'bcrypt';
+import poolConfig from "@/app/lib/poolConfig";
+const mariadb = require('mariadb')
 
 export async function POST(req, res){
     const data = await req.json() // {email : 'asd', password : 'asds'}
@@ -9,9 +11,10 @@ export async function POST(req, res){
     if(isValidRegisterForm(data).length != 0){
         return NextResponse.json({errorMessage : "Validation failed, please ensure that username, password and email are valid."}, {status : 400})
     }
-
+    let pool;
     let conn;
     try {
+        pool = mariadb.createPool(poolConfig)
         conn = await pool.getConnection();
         // check if email and username alreayd exist in database
         let query = "SELECT * FROM users WHERE email = ? AND username = ?"
@@ -35,9 +38,7 @@ export async function POST(req, res){
         return NextResponse.json({errorMessage : error.sqlMessage}, {status : 403})
     }
     finally{
-        if(conn) 
-            conn.end();
-        //if(pool)
-            //pool.end();
+        if(conn) conn.end();
+        if(pool) pool.end();
     }
 }
