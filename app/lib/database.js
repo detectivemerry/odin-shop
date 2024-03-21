@@ -6,6 +6,7 @@ const pool = mariadb.createPool({
   password: process.env.MARIADB_PASS,
   database: process.env.MARIADB_DATABASE
 });
+
 export default pool;
 
 //export default async function getUsers( testObject ){
