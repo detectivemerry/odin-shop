@@ -6,7 +6,7 @@ export default function products() {
 
   return (
     <div className = "flex-col">
-      <div className = "text-center text-7xl m-[10vh] underline decoration-orange-800">
+      <div className = "text-center text-7xl my-12 lg:m-[10vh] underline decoration-orange-800">
         Products
       </div>
       <div>

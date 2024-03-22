@@ -17,7 +17,7 @@ export async function POST(req, res){
         pool = mariadb.createPool(poolConfig)
         conn = await pool.getConnection();
         // check if email and username alreayd exist in database
-        let query = "SELECT * FROM users WHERE email = ? AND username = ?"
+        let query = "SELECT * FROM users WHERE email = ? OR username = ?"
         const rows = await pool.query(query, [data.email, data.username]) 
         if(rows.length > 0) 
             return NextResponse.json({errorMessage : "Email or username already exists in database."}, {status : 409})
@@ -35,7 +35,7 @@ export async function POST(req, res){
     }
     catch (error){
         console.log(error)
-        return NextResponse.json({errorMessage : error.sqlMessage}, {status : 403})
+        return NextResponse.json({errorMessage : error.sqlMessage}, {status : 500})
     }
     finally{
         if(conn) conn.end();

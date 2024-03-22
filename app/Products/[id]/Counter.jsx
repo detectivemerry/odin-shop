@@ -80,7 +80,7 @@ export default function Counter({ id }) {
         update();
         setProductInCart(true);
       }
-    } else {
+    } else if (count > 0){
       // product not already in cart
       const { error, data } = addCartItem(id, count);
       if (!error) {
@@ -147,7 +147,7 @@ export default function Counter({ id }) {
               )}
             </button>
 
-            <p className="underline text-blue-700">
+            <p className="underline text-blue-700 text-center">
               <Link href="/Products">Click here to continue browsing</Link>
             </p>
             <p className="underline text-blue-700">

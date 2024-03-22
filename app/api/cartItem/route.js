@@ -69,8 +69,8 @@ export async function POST(req, res){
     try {
         pool = mariadb.createPool(poolConfig)
         conn = await pool.getConnection();
-        let query = " INSERT INTO cart_items (user_id, product_id, quantity, paid) VALUES (?,?,?,?)";
-        const response = await conn.query(query, [session.id, product_id, newQuantity, false]);
+        let query = " INSERT INTO cart_items (user_id, product_id, quantity) VALUES (?,?,?)";
+        const response = await conn.query(query, [session.id, product_id, newQuantity]);
         if(response.affectedRows == 1)
             return NextResponse.json({message : "Successfully added cart item"}, {status : 200})
         else

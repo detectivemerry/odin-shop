@@ -32,21 +32,23 @@ export default function Notification({message, setMessage}) {
     <>
     {
         message.type != "" ? 
-       <div className = {clsx("flex flex-col p-2 text-center rounded-lg shadow-md", {
+       <div className = {clsx("flex flex-col pb-2 text-center rounded-lg shadow-md", {
                 'bg-red-300 text-white' : message.type === 'error',
                 'text-black bg-white ' : message.type == 'message'
        })}>
-        <div className = "flex flex-row">
-            <div>
-                {/** message.type **/}
+        <div className = "flex flex-row bg-emerald-300 p-1 rounded-t-lg">
+            <div className = "flex flex-col flex-grow text-center">
+                {message.type}
             </div>
-            <div className = "ml-auto pr-3">
-                <button className = "" onClick = {handleClearNotification}>
+            <div className = "pr-3">
+                <div className = "">
+                <button className = "font-bold" onClick = {handleClearNotification}>
                     x
                 </button>
+                </div>
             </div>
         </div>
-        <div>
+        <div className = "p-1">
             {message.content}</div> 
         </div> 
         : <></>

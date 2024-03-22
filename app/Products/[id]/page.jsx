@@ -17,7 +17,6 @@ export async function generateStaticParams() {
   return products.map((product) => {
     id: product.id;
   })
-  
 }
 
 async function getProduct(id) {
@@ -36,7 +35,7 @@ async function getProduct(id) {
 export default async function ProductDetails({ params }) {
   const product = await getProduct(params.id);
   return (
-    <div className="flex flex-row mx-32 my-16">
+    <div className="flex flex-row md:mx-2 lg:mx-32 my-16">
       <div className="border-2 w-96 flex flex-col  justify-center items-center flex-2 bg-white">
         <Image
           src={product.image}
