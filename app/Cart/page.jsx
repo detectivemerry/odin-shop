@@ -56,30 +56,17 @@ export default function page() {
           ) : (
             <div className = "text-center py-16 text-2xl">
               {
-                !context || status == "unauthenticated" ? 
-                <>
-                  <p> You have to be logged in to add items to your cart!</p>
-                  <p> Log in or sign up <Link href = "/Login" className = "text-blue-500 underline">here</Link>!</p>
-                </> :
+                status == "Loading" ? 
                 <>
                   <p> Loading... </p>
                 </>
+                :
+                <>
+                  <p> You have to be logged in to add items to your cart!</p>
+                  <p> Log in or sign up <Link href = "/Login" className = "text-blue-500 underline">here</Link>!</p>
+                </> 
               }
             </div>
-
-//          <div className="text-2xl text-center mt-10">
-//          {
-//            !context ? 
-//            <>
-//              <p> Loading... </p>
-//            </> 
-//            :
-//            <>
-//              <p> You have to be logged in to add items to your cart!</p>
-//              <p> Log in or sign up <Link href = "/Login" className = "text-blue-500 underline">here</Link>!</p>
-//            </>
-//          }
-//          </div>
           )}
         </div>
       </div>

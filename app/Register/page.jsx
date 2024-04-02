@@ -1,7 +1,9 @@
 "use client"
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { isValidEmail, isValidRegisterForm } from '../lib/validation';
 import Link  from 'next/link'
+import {useSession} from "next-auth/react";
+import { useRouter } from "next/navigation"
 
 export default function page() {
   const [email, setEmail] = useState();
@@ -9,6 +11,13 @@ export default function page() {
   const [username, setUsername] = useState();
   const [errors, setErrors] = useState([])
   const [registered, setRegistered] = useState(false)
+
+  const { data : session, status } = useSession();
+  const router  = useRouter();
+
+  useEffect(() => {
+    if(status === "authenticated") router.push('/')
+  }, [status])
 
   async function handleSubmit(e){
    e.preventDefault();
@@ -54,17 +63,26 @@ export default function page() {
           New account has been created. Click <Link href = "/Login" className = "underline text-blue-700">here</Link> to login now!
         </div>
       : <></>}
-      <div>
-        username:   
-        <input label="email" className = "rounded" onChange = {(e) => {setUsername(e.target.value)}} required = {true}></input>
-      </div>
-      <div>
-        email:   
-        <input label="email" className = "rounded" onChange = {(e) => {setEmail(e.target.value)}} required = {true}></input>
-      </div>
-      <div>
-        Password:
-        <input label="password" className = "rounded" onChange = {(e) => {setPassword(e.target.value)}} type = "password" required = {true}></input>
+      <div className = "flex flex-col gap-2">
+          <div>
+          username:   
+          </div>
+          <div>
+            <input label="email" className = "rounded" onChange = {(e) => {setUsername(e.target.value)}} required = {true}></input>
+          </div>
+          <div>
+            email:   
+          </div>
+          <div>
+            <input label="email" className = "rounded" onChange = {(e) => {setEmail(e.target.value)}} required = {true}></input>
+          </div>
+        <div>
+          Password:
+        </div>
+        <div>
+          <input label="password" className = "rounded" onChange = {(e) => {setPassword(e.target.value)}} type = "password" required = {true}></input>
+        </div>
+
       </div>
 
       <div className = "text-center text-red-500">

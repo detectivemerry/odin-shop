@@ -6,11 +6,9 @@ async function getProducts() {
     next: {
       revalidate: 60,
     },
-  }).catch((error) => {
-    console.error(error)
-  });
-
-  return res.json();
+  })
+  const data = await res.json()
+  return data;
 }
 
 export default async function ProductList() {
