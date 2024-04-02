@@ -1,8 +1,7 @@
-import pool from "@/app/lib/database"
 import { NextResponse } from "next/server"
 import {isValidRegisterForm} from "@/app/lib/validation"
 import bcrypt from 'bcrypt';
-import poolConfig from "@/app/lib/poolConfig";
+import DBConfig from "@/app/lib/DBConfig";
 const mariadb = require('mariadb')
 
 export async function POST(req, res){
@@ -11,26 +10,25 @@ export async function POST(req, res){
     if(isValidRegisterForm(data).length != 0){
         return NextResponse.json({errorMessage : "Validation failed, please ensure that username, password and email are valid."}, {status : 400})
     }
-    let pool;
+
     let conn;
     try {
-        pool = mariadb.createPool(poolConfig)
-        conn = await pool.getConnection();
+        conn = await mariadb.createConnection(DBConfig)
         // check if email and username alreayd exist in database
-        let query = "SELECT * FROM users WHERE email = ? OR username = ?"
-        const rows = await pool.query(query, [data.email, data.username]) 
+        let query = "SELECT * FROM users WHERE lower(email) = ? OR lower(username) = ?"
+        const rows = await conn.query(query, [data.email.toLowerCase(), data.username.toLowerCase()]) 
+
         if(rows.length > 0) 
             return NextResponse.json({errorMessage : "Email or username already exists in database."}, {status : 409})
         
         // generate hash and salt for password 
-        const salt = await bcrypt.genSalt(10);
+        const salt = await bcrypt.genSalt(12);
         const hashedPassword = await bcrypt.hash(data.password, salt)
         
         // add user to DB
         query  = "INSERT INTO users VALUES (DEFAULT, ?, ?, ?)"
         await conn.query(query, [data.username, hashedPassword, data.email])
 
-        conn.release();
         return NextResponse.json({status : 200})
     }
     catch (error){
@@ -39,6 +37,5 @@ export async function POST(req, res){
     }
     finally{
         if(conn) conn.end();
-        if(pool) pool.end();
     }
 }

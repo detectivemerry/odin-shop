@@ -40,19 +40,25 @@ export default function Counter({ id }) {
     });
   };
 
-  // const context = useContext(AppContext)
   const { data: context, status, update } = useSession();
 
   // Retrieve quantity for item if already in cart
   useEffect(() => {
-    context && context.cartItems.forEach((item) => {
-      if (item.product_id === id) {
-        setCurrentQuantity(item.quantity);
-        setCount(item.quantity);
+    if(context){
+      let found = context.cartItems.find((item) => item.product_id == id)
+      // item is not deleted
+      if(found){
+        setCurrentQuantity(found.quantity);
+        setCount(found.quantity);
         setProductInCart(true);
       }
-    });
-  }, []);
+      // item is deleted
+      else{
+        setCount(0);
+        setProductInCart(false)
+      }
+    }
+  }, [status]);
 
   async function handleSubmit(e) {
     e.preventDefault();

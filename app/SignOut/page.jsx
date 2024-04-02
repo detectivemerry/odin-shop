@@ -9,7 +9,7 @@ export default function SignOut() {
       <div className = "text-center text-2xl m-3 underline decoration-orange-800">Sign out</div>
       <div>
         <button className = "bg-teal-700 text-white p-1 rounded"
-        onClick={() => signOut({callbackUrl : "/"})}>Confirm sign out</button>
+          onClick={() => signOut({callbackUrl : "/"})}>Confirm sign out</button>
       </div>
     </div>
   );

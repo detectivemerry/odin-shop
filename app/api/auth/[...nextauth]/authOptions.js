@@ -1,8 +1,8 @@
 
 import CredentialsProvider from "next-auth/providers/credentials";
-//import pool from "@/app/lib/database"
 import bcrypt from 'bcrypt';
-import poolConfig from "@/app/lib/poolConfig";
+import DBConfig from "@/app/lib/DBConfig";
+import { signOut } from "next-auth/react";
 const mariadb = require('mariadb')
 
 export const authOptions = {
@@ -26,22 +26,21 @@ export const authOptions = {
       },
       async authorize(credentials) {
        //  const user = { id: "1", name: "J Smith", email: "jsmith@example.com" };
-        let pool;
         let conn;
         try {
-          pool = mariadb.createPool(poolConfig)
-          conn = await pool.getConnection();
+          conn = await mariadb.createConnection(DBConfig);
           let query = "SELECT * FROM users WHERE email = ?"
           const [user] = await conn.query(query, credentials?.email);
 
           if(!user) return null
+          //console.log("number of rounds used: ")
+          //console.log(bcrypt.getRounds(user.password))
           const passwordMatch = await bcrypt.compare(credentials?.password, user.password)
           if(!passwordMatch) return null
           
           //retrieve cart items
           query = "SELECT * FROM cart_items WHERE user_id = ?"
           const rows = await conn.query(query, user.user_id)
-          conn.release();
           
           user.cartItems = []
           rows.forEach((cartItem) => {
@@ -55,7 +54,6 @@ export const authOptions = {
         }
         finally{
           if(conn) conn.end();
-          if(pool) pool.end();
         }
         
       },
@@ -78,16 +76,13 @@ export const authOptions = {
         token.cartItems = user.cartItems
       }
       if(trigger === "update"){
-        let pool;        
         let conn;
         let cartItems = []
         try {
-          pool = mariadb.createPool(poolConfig)
-          conn = await pool.getConnection();
+          conn = await mariadb.createConnection(DBConfig)
           //retrieve cart items
           let query = "SELECT * FROM cart_items WHERE user_id = ?"
           const rows = await conn.query(query, token.id)
-          conn.release();
           
           rows.forEach((cartItem) => {
             cartItems.push(cartItem)
@@ -99,7 +94,6 @@ export const authOptions = {
         }
         finally{
           if(conn) conn.end();
-          if(pool) pool.end();
         }
       }
 

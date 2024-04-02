@@ -51,7 +51,10 @@ export default function CartItem({ id, setPrices, setMessage }) {
       setMessage({type : "error", content : data.message})
     else{
       update()
-      setPrices((prevPrices) => prevPrices.filter((price) => price.id != id))
+      // remove price if item is deleted
+      if(currentQuantity === 0)
+        setPrices((prevPrices) => prevPrices.filter((price) => price.id != id))
+
       setMessage({type : "message", content : data.message})
     }
 

@@ -1,8 +1,8 @@
 "use client"
-import React from "react";
+
 import Link from "next/link";
-import { useState } from "react"
-import { signIn } from "next-auth/react";
+import { useState, useEffect} from "react"
+import { signIn, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation"
 
 export default function page() {
@@ -10,6 +10,11 @@ export default function page() {
     const [ password, setPassword ] = useState("")
     const [ errorMessage, setErrorMessage] = useState("")
     const router  = useRouter();
+    const { data : session, status } = useSession();
+
+    useEffect(() => {
+      if(status === "authenticated") router.push('/')
+    }, [status])
 
     async function authenticate(e){
       e.preventDefault();
@@ -40,18 +45,25 @@ export default function page() {
           {errorMessage}
         </div>
       }
-      <div>
-        email:   
-        <input label="email" className = "rounded" onChange = {(e) => {setEmail(e.target.value)}}></input>
-      </div>
-      <div>
-        Password:
-        <input label="password" className = "rounded" onChange = {(e) => {setPassword(e.target.value)}} type = "password"></input>
-      </div>
-      <div>
-        <button className = "bg-teal-700 text-white p-1 rounded"
-        onClick={authenticate}>Login</button>
-      </div>
+      <div className = "flex flex-col gap-2">
+        <div className = "">
+          Email:   
+        </div>
+        <div className = "">
+          <input label="email" className = "rounded" onChange = {(e) => {setEmail(e.target.value)}}></input>
+        </div>
+        <div className = "">
+          Password:
+        </div>
+        <div className = "">
+          <input label="password" className = "rounded" onChange = {(e) => {setPassword(e.target.value)}} type = "password"></input>
+        </div>
+        </div>
+
+        <div className = "">
+          <button className = "bg-teal-700 text-white p-1 rounded"
+          onClick={authenticate}>Login</button>
+        </div>
       <div>
         Do not have an account yet? Sign up <Link href="/Register" className = "underline text-teal-700">here!</Link>
       </div>
