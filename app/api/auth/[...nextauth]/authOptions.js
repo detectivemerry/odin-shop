@@ -38,7 +38,7 @@ export const authOptions = {
           const passwordMatch = await bcrypt.compare(credentials?.password, user.password)
           if(!passwordMatch) return null
           
-          //retrieve cart items
+          //retrieve cart items if user has cart
           query = "SELECT * FROM cart_items WHERE user_id = ?"
           const rows = await conn.query(query, user.user_id)
           

@@ -1,3 +1,4 @@
+import error from "../Products/error";
 
 function isValidQuantity(value){
     let isWholeNumberAndPositive = /^\d+$/.test(value);
@@ -37,6 +38,7 @@ function isValidPassword(password){
 }
 
 function isValidRegisterForm(data){ //{username : .., password: .., email: ..}
+
     let errorMessages = []
     
     if(!isValidEmail(data.email)){

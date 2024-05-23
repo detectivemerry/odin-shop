@@ -3,7 +3,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import Link from "next/link";
 import CartItem from "./CartItem";
-import Notification from "./Notification";
+import Notification from "../api/(components)/Notification";
 import { useSession } from "next-auth/react";
 import CardDetails from "./CardDetails";
 import clsx from "clsx";

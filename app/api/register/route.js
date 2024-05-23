@@ -6,11 +6,9 @@ const mariadb = require('mariadb')
 
 export async function POST(req, res){
     const data = await req.json() // {email : 'asd', password : 'asds'}
-
     if(isValidRegisterForm(data).length != 0){
         return NextResponse.json({errorMessage : "Validation failed, please ensure that username, password and email are valid."}, {status : 400})
     }
-
     let conn;
     try {
         conn = await mariadb.createConnection(DBConfig)
@@ -26,7 +24,7 @@ export async function POST(req, res){
         const hashedPassword = await bcrypt.hash(data.password, salt)
         
         // add user to DB
-        query  = "INSERT INTO users VALUES (DEFAULT, ?, ?, ?)"
+        query  = "INSERT INTO users(user_id, username, password, email) VALUES (DEFAULT, ?, ?, ?)"
         await conn.query(query, [data.username, hashedPassword, data.email])
 
         return NextResponse.json({status : 200})
